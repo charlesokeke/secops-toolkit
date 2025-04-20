@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Toolkit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8 text-blue-600">DevOps Toolkit</h1>
+        
+        <!-- Navigation -->
+        <nav class="mb-8 flex flex-wrap gap-4 justify-center">
+            <button onclick="showSection('base64')" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Base64</button>
+            <button onclick="showSection('ip')" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">IP Tools</button>
+            <button onclick="showSection('url')" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">URL Tools</button>
+            <button onclick="showSection('trace')" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Trace Redirects</button>
+            <button onclick="showSection('epoch')" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Epoch Converter</button>
+            <button onclick="showSection('user')" class="nav-btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">User Info</button>
+        </nav>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 hidden z-50">
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            </div>
+        </div>
+
+        <!-- Base64 Section -->
+        <section id="base64" class="bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-semibold mb-4">Base64 Encoder/Decoder</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="base64Input" placeholder="Enter text here" 
+                       class="flex-1 p-2 border rounded">
+                <button onclick="handleBase64('encode')" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+                    Encode
+                </button>
+                <button onclick="handleBase64('decode')" 
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded">
+                    Decode
+                </button>
+            </div>
+            <div id="base64Result" class="p-4 bg-gray-50 rounded"></div>
+        </section>
+
+        <!-- IP Tools Section -->
+        <section id="ip" class="bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-semibold mb-4">IP Address Tools</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="ipInput" placeholder="Enter IP address" 
+                       class="flex-1 p-2 border rounded">
+                <button onclick="handleIp()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    Analyze
+                </button>
+            </div>
+            <div id="ipResult" class="p-4 bg-gray-50 rounded"></div>
+        </section>
+
+        <!-- URL Tools Section -->
+        <section id="url" class="bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-semibold mb-4">URL Tools</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="urlInput" placeholder="Enter URL" 
+                       class="flex-1 p-2 border rounded">
+                <button onclick="handleUrl('encode')" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+                    Encode
+                </button>
+                <button onclick="handleUrl('decode')" 
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded">
+                    Decode
+                </button>
+                <button onclick="handleUrl('extract')" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    Extract
+                </button>
+            </div>
+            <div id="urlResult" class="p-4 bg-gray-50 rounded overflow-x-auto"></div>
+        </section>
+
+        <!-- Trace Redirects Section -->
+        <section id="trace" class="bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-semibold mb-4">Trace URL Redirects</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="traceInput" placeholder="Enter URL" 
+                       class="flex-1 p-2 border rounded">
+                <button onclick="handleTrace()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    Trace
+                </button>
+            </div>
+            <div id="traceResult" class="p-4 bg-gray-50 rounded"></div>
+        </section>
+
+        <!-- Epoch Converter Section -->
+        <section id="epoch" class="bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-semibold mb-4">Epoch Time Converter</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" id="epochInput" placeholder="Enter epoch time" 
+                       class="flex-1 p-2 border rounded">
+                <button onclick="handleEpoch()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    Convert
+                </button>
+            </div>
+            <div id="epochResult" class="p-4 bg-gray-50 rounded"></div>
+        </section>
+
+        <!-- User Info Section -->
+        <section id="user" class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Your Information</h2>
+            <div id="userResult" class="p-4 bg-gray-50 rounded">Loading...</div>
+        </section>
+    </div>
+
+    <script>
+        // Helper functions
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function getStatusColor(status) {
+            if (status >= 200 && status < 300) return 'bg-green-100 text-green-800';
+            if (status >= 300 && status < 400) return 'bg-yellow-100 text-yellow-800';
+            if (status >= 400 && status < 500) return 'bg-orange-100 text-orange-800';
+            if (status >= 500) return 'bg-red-100 text-red-800';
+            return 'bg-gray-100 text-gray-800';
+        }
+
+        // Section navigation with highlighting
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'ring-2', 'ring-blue-300');
+                btn.classList.add('bg-blue-500');
+            });
+            
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.textContent.trim().toLowerCase() === sectionId.replace('-', ' ')) {
+                    btn.classList.remove('bg-blue-500');
+                    btn.classList.add('bg-blue-600', 'ring-2', 'ring-blue-300');
+                }
+            });
+        }
+
+        // Base64 handler
+        async function handleBase64(operation) {
+            showLoading(true);
+            const data = document.getElementById('base64Input').value;
+            const resultDiv = document.getElementById('base64Result');
+            
+            try {
+                const response = await fetch('/api/base64', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `data=${encodeURIComponent(data)}&operation=${operation}`
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = result.error 
+                    ? `<p class="text-red-500">${result.error}</p>`
+                    : `<p class="text-green-600 break-all">${result.result}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // IP handler
+        async function handleIp() {
+            showLoading(true);
+            const ip = document.getElementById('ipInput').value;
+            const resultDiv = document.getElementById('ipResult');
+            
+            try {
+                const response = await fetch('/api/ip', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `ip=${encodeURIComponent(ip)}`
+                });
+                
+                const result = await response.json();
+                if (result.error) {
+                    resultDiv.innerHTML = `<p class="text-red-500">${result.error}</p>`;
+                    return;
+                }
+
+                let html = `
+                    <p><strong>Binary:</strong> ${result.binary}</p>
+                    <p><strong>Type:</strong> ${result.type}</p>`;
+                
+                if (result.type === 'IPv4') {
+                    html += `
+                        <p><strong>Subnet:</strong> ${result.subnet}</p>
+                        <p><strong>Subnet Mask:</strong> ${result.subnet_mask}</p>
+                        <p><strong>Class:</strong> ${result.ip_class}</p>`;
+                }
+
+                html += `<div class="mt-4 p-4 bg-white rounded">
+                            <h3 class="font-semibold mb-2">Geolocation Info:</h3>
+                            <pre>${JSON.stringify(result.geo_info, null, 2)}</pre>
+                        </div>`;
+
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // URL handler
+        async function handleUrl(operation) {
+            showLoading(true);
+            const url = document.getElementById('urlInput').value;
+            const resultDiv = document.getElementById('urlResult');
+            
+            try {
+                const response = await fetch('/api/url', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `url=${encodeURIComponent(url)}&operation=${operation}`
+                });
+                
+                const result = await response.json();
+                if (result.error) {
+                    resultDiv.innerHTML = `<p class="text-red-500">${result.error}</p>`;
+                    return;
+                }
+
+                let html;
+                if (operation === 'extract') {
+                    html = `
+                        <p><strong>Host:</strong> ${result.host}</p>
+                        <p><strong>Scheme:</strong> ${result.scheme}</p>
+                        <p><strong>Path:</strong> ${result.path}</p>
+                        <pre class="mt-2">Params: ${JSON.stringify(result.params, null, 2)}</pre>`;
+                } else {
+                    html = `<p class="text-green-600 break-all">${result.result}</p>`;
+                }
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Trace handler
+        async function handleTrace() {
+            showLoading(true);
+            const url = document.getElementById('traceInput').value;
+            const resultDiv = document.getElementById('traceResult');
+            
+            try {
+                const response = await fetch('/api/trace', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `url=${encodeURIComponent(url)}`
+                });
+                
+                const result = await response.json();
+                if (result.error) {
+                    resultDiv.innerHTML = `<p class="text-red-500">${result.error}</p>`;
+                    return;
+                }
+
+                let html = '<div class="space-y-2">';
+                result.redirects.forEach((redirect, index) => {
+                    html += `
+                        <div class="p-2 bg-white rounded">
+                            <p class="font-medium">Step ${index + 1}:</p>
+                            <p class="inline-flex items-center gap-2">
+                                Status: 
+                                <span class="px-2 py-1 rounded ${getStatusColor(redirect.status_code)}">
+                                    ${redirect.status_code}
+                                </span>
+                            </p>
+                            <p class="break-all">URL: ${redirect.url}</p>
+                        </div>`;
+                });
+                html += '</div>';
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Epoch handler
+        async function handleEpoch() {
+            showLoading(true);
+            const epoch = document.getElementById('epochInput').value;
+            const resultDiv = document.getElementById('epochResult');
+            
+            try {
+                const response = await fetch('/api/epoch', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: `epoch=${encodeURIComponent(epoch)}`
+                });
+                
+                const result = await response.json();
+                if (result.error) {
+                    resultDiv.innerHTML = `<p class="text-red-500">${result.error}</p>`;
+                    return;
+                }
+
+                const html = `
+                    <p><strong>Readable:</strong> ${result.readable}</p>
+                    <p><strong>ISO:</strong> ${result.iso}</p>
+                    <p><strong>RFC:</strong> ${result.rfc}</p>
+                    <p><strong>Local:</strong> ${result.local}</p>`;
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load user info on page load
+        (async function loadUserInfo() {
+            const resultDiv = document.getElementById('userResult');
+            try {
+                const response = await fetch('/api/user-info');
+                const result = await response.json();
+                
+                const html = `
+                    <p><strong>IP Address:</strong> ${result.ip_address}</p>
+                    <p><strong>User Agent:</strong> ${result.user_agent}</p>
+                    <div class="mt-4">
+                        <h3 class="font-semibold mb-2">Headers:</h3>
+                        <pre>${JSON.stringify(result.headers, null, 2)}</pre>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="font-semibold mb-2">Geolocation:</h3>
+                        <pre>${JSON.stringify(result.geo_info, null, 2)}</pre>
+                    </div>`;
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error loading user info: ${error.message}</p>`;
+            }
+        })();
+
+        // Initialize with first section active
+        showSection('user');
+    </script>
+</body>
+</html>
